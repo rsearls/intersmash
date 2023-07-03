@@ -236,6 +236,19 @@ public class IntersmashConfig {
 		return XTFConfig.get(BOOTABLE_JAR_IMAGE_URL);
 	}
 
+	// rls test start -------------------
+	private static final String EAP7_IMAGE_URL = "appsint.eap7.image";
+	private static final String EAP7_RUNTIME_IMAGE_URL = "appsint.eap7.runtime.image";
+
+	public static String eap7ImageURL() {
+		return XTFConfig.get(EAP7_IMAGE_URL);
+	}
+
+	public static String eap7RuntimeImageURL() {
+		return XTFConfig.get(EAP7_RUNTIME_IMAGE_URL);
+	}
+	// rls test end -------------------
+
 	public static String wildflyImageURL() {
 		return XTFConfig.get(WILDFLY_IMAGE_URL);
 	}
