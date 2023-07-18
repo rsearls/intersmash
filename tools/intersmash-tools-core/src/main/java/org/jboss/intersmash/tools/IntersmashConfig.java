@@ -237,15 +237,15 @@ public class IntersmashConfig {
 	}
 
 	// rls test start -------------------
-	private static final String EAP7_IMAGE_URL = "appsint.eap7.image";
-	private static final String EAP7_RUNTIME_IMAGE_URL = "appsint.eap7.runtime.image";
+	private static final String LEGACY_WILDFLY_IMAGE_URL = "intersmash.legacy.wildfly.image";
+	private static final String LEGACY_WILDFLY_RUNTIME_IMAGE_URL = "intersmash.legacy.wildfly.runtime.image";
 
-	public static String eap7ImageURL() {
-		return XTFConfig.get(EAP7_IMAGE_URL);
+	public static String legacyWildflyImageURL() {
+		return XTFConfig.get(LEGACY_WILDFLY_IMAGE_URL);
 	}
 
-	public static String eap7RuntimeImageURL() {
-		return XTFConfig.get(EAP7_RUNTIME_IMAGE_URL);
+	public static String legacyWildflyRuntimeImageURL() {
+		return XTFConfig.get(LEGACY_WILDFLY_RUNTIME_IMAGE_URL);
 	}
 	// rls test end -------------------
 

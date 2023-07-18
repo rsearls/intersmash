@@ -28,8 +28,8 @@ import java.util.stream.Collectors;
 
 import org.assertj.core.util.Strings;
 import org.jboss.intersmash.tools.IntersmashConfig;
-import org.jboss.intersmash.tools.application.openshift.EAP7ImageOpenShiftApplication;
-import org.jboss.intersmash.tools.application.openshift.EAP7OpenShiftApplication;
+import org.jboss.intersmash.tools.application.openshift.LegacyWildflyImageOpenShiftApplication;
+import org.jboss.intersmash.tools.application.openshift.LegacyWildflyOpenShiftApplication;
 import org.jboss.intersmash.tools.application.openshift.input.BinarySource;
 import org.jboss.intersmash.tools.application.openshift.input.BuildInput;
 import org.jboss.intersmash.tools.application.openshift.input.GitSource;
@@ -55,22 +55,22 @@ import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 
 /**
- * Class deploys a EAP7 application based on {@link EAP7OpenShiftApplication}
+ * Class deploys a Wildfly legacy (i.e. javax.* based) application based on {@link LegacyWildflyOpenShiftApplication}
  */
 @Slf4j
-public class EAP7ImageOpenShiftProvisioner implements OpenShiftProvisioner<EAP7ImageOpenShiftApplication> {
+public class LegacyWildflyImageOpenShiftProvisioner implements OpenShiftProvisioner<LegacyWildflyImageOpenShiftApplication> {
 
-	private final EAP7ImageOpenShiftApplication eap7Application;
+	private final LegacyWildflyImageOpenShiftApplication application;
 	private final String CLI_LAUNCH_SCRIPT = "CLI_LAUNCH_SCRIPT";
 	private FailFastCheck ffCheck = () -> false;
 
-	public EAP7ImageOpenShiftProvisioner(@NonNull EAP7ImageOpenShiftApplication eap7Application) {
-		this.eap7Application = eap7Application;
+	public LegacyWildflyImageOpenShiftProvisioner(@NonNull LegacyWildflyImageOpenShiftApplication application) {
+		this.application = application;
 	}
 
 	@Override
-	public EAP7ImageOpenShiftApplication getApplication() {
-		return eap7Application;
+	public LegacyWildflyImageOpenShiftApplication getApplication() {
+		return application;
 	}
 
 	@Override
@@ -80,48 +80,48 @@ public class EAP7ImageOpenShiftProvisioner implements OpenShiftProvisioner<EAP7I
 
 	@Override
 	public void undeploy() {
-		OpenShiftUtils.deleteResourcesWithLabel(openShift, APP_LABEL_KEY, eap7Application.getName());
+		OpenShiftUtils.deleteResourcesWithLabel(openShift, APP_LABEL_KEY, application.getName());
 		// when using git repo S2I process creates some custom maps and build pods
 		openShift.getConfigMaps()
 				.stream()
-				.filter(cfMap -> cfMap.getMetadata().getName().startsWith(eap7Application.getName()))
+				.filter(cfMap -> cfMap.getMetadata().getName().startsWith(application.getName()))
 				.forEach(openShift::deleteConfigMap);
 		openShift.getPods()
 				.stream()
-				.filter(pod -> pod.getMetadata().getName().startsWith(eap7Application.getName()))
+				.filter(pod -> pod.getMetadata().getName().startsWith(application.getName()))
 				.forEach(openShift::deletePod);
 	}
 
 	@Override
 	public void scale(int replicas, boolean wait) {
-		openShift.scale(eap7Application.getName(), replicas);
+		openShift.scale(application.getName(), replicas);
 		if (wait) {
 			waitForReplicas(replicas);
 		}
 	}
 
 	public void waitForReplicas(int replicas) {
-		OpenShiftWaiters.get(openShift, ffCheck).areExactlyNPodsReady(replicas, eap7Application.getName()).level(Level.DEBUG)
+		OpenShiftWaiters.get(openShift, ffCheck).areExactlyNPodsReady(replicas, application.getName()).level(Level.DEBUG)
 				.waitFor();
 		WaitersUtil.serviceEndpointsAreReady(openShift, getApplication().getName(), replicas, 8080)
 				.level(Level.DEBUG)
 				.waitFor();
 		if (replicas > 0) {
-			WaitersUtil.routeIsUp(getUrl(eap7Application.getName(), false))
+			WaitersUtil.routeIsUp(getUrl(application.getName(), false))
 					.level(Level.DEBUG)
 					.waitFor();
 		}
 	}
 
 	private ApplicationBuilder getAppBuilder() {
-		BuildInput buildInput = eap7Application.getBuildInput();
+		BuildInput buildInput = application.getBuildInput();
 		Objects.requireNonNull(buildInput);
 
 		if (BinarySource.class.isAssignableFrom(buildInput.getClass())) {
 			BinarySource binarySource = (BinarySource) buildInput;
 			log.debug("Create application builder from source (path: {}).", binarySource.getArchive().toString());
 
-			List<EnvVar> environmentVariables = new ArrayList<>(eap7Application.getEnvVars());
+			List<EnvVar> environmentVariables = new ArrayList<>(application.getEnvVars());
 
 			File archiveFile = binarySource.getArchive().toFile();
 			if (archiveFile.isDirectory()) {
@@ -171,18 +171,18 @@ public class EAP7ImageOpenShiftProvisioner implements OpenShiftProvisioner<EAP7I
 						oc new-app wildfly-build-from-server
 				 */
 				BinaryBuild binaryBuild;
-				Path localSourceCode = eap7Application.prepareProjectSources(binarySource.getArchive());
+				Path localSourceCode = application.prepareProjectSources(binarySource.getArchive());
 				binaryBuild = new BinarySourceBuild(
-						IntersmashConfig.eap7ImageURL(),
+						IntersmashConfig.legacyWildflyImageURL(),
 						localSourceCode,
 						environmentVariables.stream().collect(Collectors.toMap(EnvVar::getName, EnvVar::getValue)),
-						eap7Application.getName());
+						application.getName());
 				ManagedBuildReference reference = BuildManagers.get().deploy(binaryBuild);
 				BuildManagers.get().hasBuildCompleted(binaryBuild).waitFor();
 				return ApplicationBuilder.fromManagedBuild(
-						eap7Application.getName(),
+						application.getName(),
 						reference,
-						Collections.singletonMap(APP_LABEL_KEY, eap7Application.getName()));
+						Collections.singletonMap(APP_LABEL_KEY, application.getName()));
 			} else if (archiveFile.isFile()) {
 				/*
 				  Legacy S2I Binary build which takes as input an already built artifact e.g. WAR file;
@@ -212,17 +212,17 @@ public class EAP7ImageOpenShiftProvisioner implements OpenShiftProvisioner<EAP7I
 
 					oc new-app wildfly-build-from-war
 				 */
-				BinaryBuildFromFile eap7Build = new BinaryBuildFromFile(
-						IntersmashConfig.eap7ImageURL(),
+				BinaryBuildFromFile legacyWildflyBuild = new BinaryBuildFromFile(
+						IntersmashConfig.legacyWildflyImageURL(),
 						binarySource.getArchive(),
 						environmentVariables.stream().collect(Collectors.toMap(EnvVar::getName, EnvVar::getValue)),
-						eap7Application.getName() + "-"
-								+ IntersmashConfig.getProductCode(IntersmashConfig.eap7ImageURL()));
-				ManagedBuildReference reference = BuildManagers.get().deploy(eap7Build);
-				BuildManagers.get().hasBuildCompleted(eap7Build).level(Level.DEBUG).waitFor();
+						application.getName() + "-"
+								+ IntersmashConfig.getProductCode(IntersmashConfig.legacyWildflyImageURL()));
+				ManagedBuildReference reference = BuildManagers.get().deploy(legacyWildflyBuild);
+				BuildManagers.get().hasBuildCompleted(legacyWildflyBuild).level(Level.DEBUG).waitFor();
 
-				return ApplicationBuilder.fromManagedBuild(eap7Application.getName(), reference,
-						Collections.singletonMap(APP_LABEL_KEY, eap7Application.getName()));
+				return ApplicationBuilder.fromManagedBuild(application.getName(), reference,
+						Collections.singletonMap(APP_LABEL_KEY, application.getName()));
 			} else {
 				throw new RuntimeException(
 						String.format("'%s' archive path must be either a directory or a file", archiveFile.getAbsolutePath()));
@@ -234,16 +234,16 @@ public class EAP7ImageOpenShiftProvisioner implements OpenShiftProvisioner<EAP7I
 			GitSource gitSource = (GitSource) buildInput;
 			log.debug("Create application builder from git reference (repo: {}, ref: {}).",
 					gitSource.getUri(), gitSource.getRef());
-			ApplicationBuilder appBuilder = ApplicationBuilder.fromS2IBuild(eap7Application.getName(),
-					IntersmashConfig.eap7ImageURL(),
+			ApplicationBuilder appBuilder = ApplicationBuilder.fromS2IBuild(application.getName(),
+					IntersmashConfig.legacyWildflyImageURL(),
 					gitSource.getUri(),
-					Collections.singletonMap(APP_LABEL_KEY, eap7Application.getName()));
+					Collections.singletonMap(APP_LABEL_KEY, application.getName()));
 
 			appBuilder.buildConfig().onConfigurationChange().gitRef(gitSource.getRef());
 			if (!Strings.isNullOrEmpty(gitSource.getContextDir()))
 				appBuilder.buildConfig().onConfigurationChange().gitContextDir(gitSource.getContextDir());
 
-			eap7Application.getEnvVars().stream()
+			application.getEnvVars().stream()
 					.forEach(entry -> appBuilder.buildConfig().sti().addEnvVariable(entry.getName(), entry.getValue()));
 			return appBuilder;
 		} else {
@@ -253,7 +253,7 @@ public class EAP7ImageOpenShiftProvisioner implements OpenShiftProvisioner<EAP7I
 
 	private void deployImage() {
 		ffCheck = FailFastUtils.getFailFastCheck(EventHelper.timeOfLastEventBMOrTestNamespaceOrEpoch(),
-				eap7Application.getName());
+				application.getName());
 		ApplicationBuilder appBuilder = getAppBuilder();
 		appBuilder.service()
 				.port("8080-tcp", 8080, 8080, TransportProtocol.TCP);
@@ -270,10 +270,10 @@ public class EAP7ImageOpenShiftProvisioner implements OpenShiftProvisioner<EAP7I
 				.createHttpProbe("/health/ready", "9990");
 
 		// setup the ping service for clustering using DNS_PING
-		if (eap7Application.getPingServiceName() != null) {
-			String pingServiceName = eap7Application.getPingServiceName();
+		if (application.getPingServiceName() != null) {
+			String pingServiceName = application.getPingServiceName();
 			int pingServicePort = 8888;
-			appBuilder.service(eap7Application.getPingServiceName())
+			appBuilder.service(application.getPingServiceName())
 					.addAnnotation("service.alpha.kubernetes.io/tolerate-unready-endpoints", "true")
 					.headless()
 					.port("ping", pingServicePort, pingServicePort, TransportProtocol.TCP);
@@ -285,12 +285,12 @@ public class EAP7ImageOpenShiftProvisioner implements OpenShiftProvisioner<EAP7I
 		}
 
 		// mount postconfigure CLI commands
-		if (!eap7Application.getCliScript().isEmpty()) {
+		if (!application.getCliScript().isEmpty()) {
 			final String extensionPath = "/opt/server/extensions";
 			final String scriptName = "configure.cli";
 
 			appBuilder.configMap("jboss-cli")
-					.configEntry(scriptName, String.join("\n", eap7Application.getCliScript()));
+					.configEntry(scriptName, String.join("\n", application.getCliScript()));
 
 			appBuilder.deploymentConfig()
 					.podTemplate()
@@ -298,15 +298,15 @@ public class EAP7ImageOpenShiftProvisioner implements OpenShiftProvisioner<EAP7I
 					.container()
 					.addVolumeMount("jboss-cli", extensionPath, false);
 
-			if (eap7Application.getEnvVars().stream().noneMatch((envVar -> envVar.getName().equals(CLI_LAUNCH_SCRIPT)))) {
+			if (application.getEnvVars().stream().noneMatch((envVar -> envVar.getName().equals(CLI_LAUNCH_SCRIPT)))) {
 				// Application doesn't provide necessary env variable value to the extension script, so let's define it here.
 				addEnvVariable(appBuilder, CLI_LAUNCH_SCRIPT, extensionPath + "/" + scriptName, true,
-						!BinarySource.class.isAssignableFrom(eap7Application.getBuildInput().getClass()));
+						!BinarySource.class.isAssignableFrom(application.getBuildInput().getClass()));
 			}
 		}
 
 		// mount secrets to /etc/secrets
-		for (Secret secret : eap7Application.getSecrets()) {
+		for (Secret secret : application.getSecrets()) {
 			appBuilder.deploymentConfig().podTemplate()
 					.addSecretVolume(secret.getMetadata().getName(), secret.getMetadata().getName())
 					.container()
@@ -317,18 +317,18 @@ public class EAP7ImageOpenShiftProvisioner implements OpenShiftProvisioner<EAP7I
 
 		// env vars
 		appBuilder.deploymentConfig().podTemplate().container()
-				.envVars(eap7Application.getEnvVars().stream().collect(Collectors.toMap(EnvVar::getName, EnvVar::getValue)));
+				.envVars(application.getEnvVars().stream().collect(Collectors.toMap(EnvVar::getName, EnvVar::getValue)));
 
 		// enable script debugging
-		if (eap7Application.getEnvVars().stream().noneMatch((envVar -> envVar.getName().equals(SCRIPT_DEBUG)))) {
+		if (application.getEnvVars().stream().noneMatch((envVar -> envVar.getName().equals(SCRIPT_DEBUG)))) {
 			if (IntersmashConfig.scriptDebug() != null)
 				addEnvVariable(appBuilder, SCRIPT_DEBUG, IntersmashConfig.scriptDebug(), true,
-						!BinarySource.class.isAssignableFrom(eap7Application.getBuildInput().getClass()));
+						!BinarySource.class.isAssignableFrom(application.getBuildInput().getClass()));
 		}
 
 		// mount persistent volumes into pod
-		if (!eap7Application.getPersistentVolumeClaimMounts().isEmpty()) {
-			eap7Application.getPersistentVolumeClaimMounts().entrySet().stream()
+		if (!application.getPersistentVolumeClaimMounts().isEmpty()) {
+			application.getPersistentVolumeClaimMounts().entrySet().stream()
 					.forEach(entry -> {
 						PersistentVolumeClaim pvc = entry.getKey();
 						Set<VolumeMount> vms = entry.getValue();
@@ -342,7 +342,7 @@ public class EAP7ImageOpenShiftProvisioner implements OpenShiftProvisioner<EAP7I
 		}
 
 		appBuilder.buildApplication(openShift).deploy();
-		OpenShiftWaiters.get(openShift, ffCheck).isDcReady(eap7Application.getName()).level(Level.DEBUG).waitFor();
+		OpenShiftWaiters.get(openShift, ffCheck).isDcReady(application.getName()).level(Level.DEBUG).waitFor();
 		// 1 by default
 		waitForReplicas(1);
 	}

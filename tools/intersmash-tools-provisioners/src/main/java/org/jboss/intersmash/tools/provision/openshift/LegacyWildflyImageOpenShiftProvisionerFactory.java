@@ -16,18 +16,19 @@
 package org.jboss.intersmash.tools.provision.openshift;
 
 import org.jboss.intersmash.tools.application.Application;
-import org.jboss.intersmash.tools.application.openshift.EAP7ImageOpenShiftApplication;
+import org.jboss.intersmash.tools.application.openshift.LegacyWildflyImageOpenShiftApplication;
 import org.jboss.intersmash.tools.provision.ProvisionerFactory;
 
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
-public class EAP7ImageOpenShiftProvisionerFactory implements ProvisionerFactory<EAP7ImageOpenShiftProvisioner> {
+public class LegacyWildflyImageOpenShiftProvisionerFactory
+		implements ProvisionerFactory<LegacyWildflyImageOpenShiftProvisioner> {
 
 	@Override
-	public EAP7ImageOpenShiftProvisioner getProvisioner(Application application) {
-		if (EAP7ImageOpenShiftApplication.class.isAssignableFrom(application.getClass()))
-			return new EAP7ImageOpenShiftProvisioner((EAP7ImageOpenShiftApplication) application);
+	public LegacyWildflyImageOpenShiftProvisioner getProvisioner(Application application) {
+		if (LegacyWildflyImageOpenShiftApplication.class.isAssignableFrom(application.getClass()))
+			return new LegacyWildflyImageOpenShiftProvisioner((LegacyWildflyImageOpenShiftApplication) application);
 		return null;
 	}
 }

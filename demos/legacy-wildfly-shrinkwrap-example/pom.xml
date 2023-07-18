@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>org.jboss.intersmash</groupId>
+        <artifactId>intersmash-demos</artifactId>
+        <version>0.0.1-SNAPSHOT</version>
+        <relativePath>../pom.xml</relativePath>
+    </parent>
+
+    <artifactId>legacy-wildfly-shrinkwrap-example</artifactId>
+
+    <properties>
+        <!-- Default WildFly legacy Javax based BOMs version is set here for pulling the right EAP BOM -->
+        <bom.legacy-wildfly-jakartaee.groupId>org.wildfly.bom</bom.legacy-wildfly-jakartaee.groupId>
+        <bom.legacy-wildfly-jakartaee.artifactId>wildfly-jakartaee8</bom.legacy-wildfly-jakartaee.artifactId>
+        <bom.legacy-wildfly-jakartaee.version>26.1.2.Final</bom.legacy-wildfly-jakartaee.version>
+
+
+        <formatting-style-base-directory>${project.parent.parent.basedir}/ide-config</formatting-style-base-directory>
+    </properties>
+
+    <dependencyManagement>
+        <dependencies>
+            <!-- BOMs -->
+            <dependency>
+                <groupId>com.fasterxml.jackson</groupId>
+                <artifactId>jackson-bom</artifactId>
+                <version>2.15.2</version>
+                <scope>import</scope>
+                <type>pom</type>
+            </dependency>
+            <!-- Lock all the provided legacy Javax dependencies to match the WildFly/EAP version -->
+            <dependency>
+                <groupId>${bom.legacy-wildfly-jakartaee.groupId}</groupId>
+                <artifactId>${bom.legacy-wildfly-jakartaee.artifactId}</artifactId>
+                <version>${bom.legacy-wildfly-jakartaee.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
+    <dependencies>
+        <!-- Import the CDI API, we use provided scope as the API is included in WildFly -->
+        <dependency>
+            <groupId>jakarta.inject</groupId>
+            <artifactId>jakarta.inject-api</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <!-- Import the JAX-RS API, we use provided scope as the API is included WildFly -->
+        <dependency>
+            <groupId>org.jboss.spec.javax.ws.rs</groupId>
+            <artifactId>jboss-jaxrs-api_2.1_spec</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.jboss.spec.javax.servlet</groupId>
+            <artifactId>jboss-servlet-api_4.0_spec</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.jboss.shrinkwrap</groupId>
+            <artifactId>shrinkwrap-impl-base</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.jboss.intersmash</groupId>
+            <artifactId>intersmash-tools-core</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.jboss.intersmash</groupId>
+            <artifactId>intersmash-tools-provisioners</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>cz.xtf</groupId>
+            <artifactId>core</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+
+        <dependency>
+            <groupId>com.fasterxml.jackson.dataformat</groupId>
+            <artifactId>jackson-dataformat-yaml</artifactId>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+
+</project>
