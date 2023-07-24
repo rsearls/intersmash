@@ -24,10 +24,10 @@ import io.fabric8.kubernetes.api.model.Secret;
  * This interface is not supposed to be implemented by user Applications. See the "Mapping of implemented provisioners"
  * section of Intersmash README.md file for the up-to-date list of supported end users Applications.
  */
-public interface EAP7OpenShiftApplication extends OpenShiftApplication, HasSecrets {
+public interface LegacyWildflyOpenShiftApplication extends OpenShiftApplication, HasSecrets {
 
 	//
-	//  EAP7/Application configuration
+	//  Legacy Wildfly (i.e. javax.* based)/Application configuration
 	//
 
 	default List<String> getCliScript() {

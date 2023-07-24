@@ -1,4 +1,4 @@
-package org.jboss.intersmash.testsuite.demo.shrinkwrap;
+package org.jboss.intersmash.demos.wildfly.legacy.shrinkwrap;
 
 import org.assertj.core.api.Assertions;
 import org.jboss.intersmash.tools.annotations.Intersmash;
@@ -13,13 +13,13 @@ import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @Intersmash({
-		@Service(EAP7ShrinkWrapImageOpenShiftApplication.class)
+		@Service(LegacyWildflyShrinkWrapImageOpenShiftApplication.class)
 })
-public class ShrinkWrapEAP7ArchiveTest {
-	@ServiceUrl(EAP7ShrinkWrapImageOpenShiftApplication.class)
+public class LegacyWildflyShrinkWrapArchiveTest {
+	@ServiceUrl(LegacyWildflyShrinkWrapImageOpenShiftApplication.class)
 	private String appOpenShiftUrl;
 
-	@ServiceProvisioner(EAP7ShrinkWrapImageOpenShiftApplication.class)
+	@ServiceProvisioner(LegacyWildflyShrinkWrapImageOpenShiftApplication.class)
 	private OpenShiftProvisioner appOpenShiftProvisioner;
 
 	@Test

@@ -1,13 +1,13 @@
-package org.jboss.intersmash.testsuite.demo.shrinkwrap;
-
-import jakarta.inject.Inject;
-import jakarta.servlet.annotation.WebServlet;
-import jakarta.servlet.http.HttpServlet;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
+package org.jboss.intersmash.demos.wildfly.legacy.shrinkwrap;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+
+import javax.inject.Inject;
+import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 @WebServlet("/HelloWorld")
 public class HelloWorldServlet extends HttpServlet {

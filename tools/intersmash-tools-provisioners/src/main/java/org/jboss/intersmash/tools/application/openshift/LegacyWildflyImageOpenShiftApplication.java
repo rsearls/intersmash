@@ -30,7 +30,7 @@ import cz.xtf.builder.builders.pod.PersistentVolumeClaim;
 import cz.xtf.builder.builders.pod.VolumeMount;
 import io.fabric8.kubernetes.api.model.EnvVar;
 
-public interface EAP7ImageOpenShiftApplication extends EAP7OpenShiftApplication, HasEnvVars {
+public interface LegacyWildflyImageOpenShiftApplication extends LegacyWildflyOpenShiftApplication, HasEnvVars {
 
 	/**
 	 * Use the {@link BuildInputBuilder} to get instances implementing the {@link BuildInput} interface.
@@ -42,7 +42,7 @@ public interface EAP7ImageOpenShiftApplication extends EAP7OpenShiftApplication,
 	BuildInput getBuildInput();
 
 	/**
-	 * Setup mount points to EAP7 pod and persistent volume claims to be created.
+	 * Setup mount points to Legacy Wildfly (i.e. javax.* based) pod and persistent volume claims to be created.
 	 * @return A {@link Map} instance storing PVCs needed by the WILDFLY application service
 	 */
 	default Map<PersistentVolumeClaim, Set<VolumeMount>> getPersistentVolumeClaimMounts() {

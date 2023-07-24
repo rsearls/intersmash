@@ -1,4 +1,4 @@
-package org.jboss.intersmash.testsuite.demo.shrinkwrap;
+package org.jboss.intersmash.demos.wildfly.legacy.shrinkwrap;
 
 public class HelloService {
 	String createHelloMessage(String name) {
