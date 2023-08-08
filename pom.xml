@@ -12,6 +12,7 @@
         <module>tools</module>
         <module>deployments</module>
         <module>testsuite</module>
+        <module>bom</module>
     </modules>
 
     <properties>
