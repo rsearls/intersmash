@@ -15,6 +15,11 @@
         <version.openshift-client>5.12.2</version.openshift-client>
         <version.lombok>1.18.20</version.lombok>
         <version.org.slf4j>1.7.30</version.org.slf4j>
+        <version.org.assertj>3.17.2</version.org.assertj>
+        <version.org.junit.jupiter>5.7.0</version.org.junit.jupiter>
+        <version.org.eclipse.aether>1.1.0</version.org.eclipse.aether>
+        <version.maven-settings-builder>3.3.9</version.maven-settings-builder>
+        <version.junit>1.7.0</version.junit>
     </properties>
 
     <dependencyManagement>
@@ -87,6 +92,31 @@
                 <groupId>org.slf4j</groupId>
                 <artifactId>jcl-over-slf4j</artifactId>
                 <version>${version.org.slf4j}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.assertj</groupId>
+                <artifactId>assertj-core</artifactId>
+                <version>${version.org.assertj}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.junit.jupiter</groupId>
+                <artifactId>junit-jupiter-api</artifactId>
+                <version>${version.org.junit.jupiter}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.junit.platform</groupId>
+                <artifactId>junit-platform-launcher</artifactId>
+                <version>${version.junit}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.eclipse.aether</groupId>
+                <artifactId>aether-api</artifactId>
+                <version>${version.org.eclipse.aether}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.maven</groupId>
+                <artifactId>maven-settings-builder</artifactId>
+                <version>${version.maven-settings-builder}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
