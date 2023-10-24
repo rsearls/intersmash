@@ -3,7 +3,7 @@
 
 
 ## jbws-testsuite-default-elytron-CLI.properties contents
-set testResourcesDir=${testResourcesDir}
+##set testResourcesDir=${testResourcesDir}
 set usersPropFile=${usersPropFile}
 set rolesPropFile=${rolesPropFile}
 set keystorePath=${keystorePath}
@@ -19,8 +19,8 @@ set keystorePath=${keystorePath}
 # 1.
 echo JBossWS domain config
 ./subsystem=elytron/properties-realm=JBossWS \
-   :add(users-properties={path=$testResourcesDir/jaxws/samples/wsse/policy/jaas/ejb-digest/META-INF/jbossws-users.properties, plain-text=true}, \
-   groups-properties={path=$testResourcesDir/jaxws/samples/wsse/policy/jaas/digest/WEB-INF/jbossws-roles.properties})
+   :add(users-properties={relative-to=jboss.server.config.dir, path=ejb-digest-jbossws-users.properties, plain-text=true}, \
+   groups-properties={relative-to=jboss.server.config.dir, path=digest-jbossws-roles.properties})
 # 2.
 ./subsystem=elytron/security-domain=JBossWS \
    :add(default-realm=JBossWS, permission-mapper=default-permission-mapper, \
@@ -39,8 +39,8 @@ echo JBossWS domain config
 echo ws-basic-domain domain config
 # 1.
 ./subsystem=elytron/properties-realm=ws-basic-domain \
-   :add(users-properties={path=$testResourcesDir/jaxws/cxf/httpauth/WEB-INF/ws-users.properties, plain-text=true}, \
-   groups-properties={path=$testResourcesDir/jaxws/cxf/httpauth/WEB-INF/ws-roles.properties})
+   :add(users-properties={relative-to=jboss.server.config.dir, path=ws-users.properties, plain-text=true}, \
+   groups-properties={relative-to=jboss.server.config.dir, path=ws-roles.properties})
 # 2.
 ./subsystem=elytron/security-domain=ws-basic-domain \
    :add(default-realm=ws-basic-domain, permission-mapper=default-permission-mapper, \
@@ -61,8 +61,8 @@ echo ws-basic-domain domain config
 echo ws-digest-domain domain config
 # 1.
 ./subsystem=elytron/properties-realm=ws-digest-domain \
-   :add(users-properties={path=$testResourcesDir/jaxws/cxf/httpauth/WEB-INF/ws-digest-users.properties}, \
-   groups-properties={path=$testResourcesDir/jaxws/cxf/httpauth/WEB-INF/ws-roles.properties})
+   :add(users-properties={relative-to=jboss.server.config.dir, path=ws-digest-users.properties}, \
+   groups-properties={relative-to=jboss.server.config.dir, path=ws-roles.properties})
 # 2.
 ./subsystem=elytron/security-domain=ws-digest-domain \
    :add(default-realm=ws-digest-domain, permission-mapper=default-permission-mapper, \
@@ -80,8 +80,8 @@ echo ws-digest-domain domain config
 echo JBossWSDigest domain config
 # 1.
 ./subsystem=elytron/properties-realm=JAASJBossWSDigestRealm \
-   :add(users-properties={path=$testResourcesDir/jaxws/samples/wsse/policy/jaas/digest/WEB-INF/jbossws-users.properties, plain-text=true}, \
-   groups-properties={path=$testResourcesDir/jaxws/samples/wsse/policy/jaas/digest/WEB-INF/jbossws-roles.properties})
+   :add(users-properties={relative-to=jboss.server.config.dir, path=digest-jbossws-users.properties, plain-text=true}, \
+   groups-properties={relative-to=jboss.server.config.dir, path=digest-jbossws-roles.properties})
 # 2.
 ./subsystem=elytron/security-domain=JBossWSDigest \
    :add(default-realm=JAASJBossWSDigestRealm, permission-mapper=default-permission-mapper, \
@@ -100,8 +100,8 @@ echo JBossWSDigest domain config
 echo JAASJBossWS domain config
 # 1.
 ./subsystem=elytron/properties-realm=JAASJBossWSRealm \
-   :add(users-properties={path=$usersPropFile, plain-text=true}, \
-   groups-properties={path=$rolesPropFile})
+   :add(users-properties={relative-to=jboss.server.config.dir, path=$usersPropFile, plain-text=true}, \
+   groups-properties={relative-to=jboss.server.config.dir, path=$rolesPropFile})
 # 2.
 ./subsystem=elytron/security-domain=JAASJBossWS \
    :add(default-realm=JAASJBossWSRealm, permission-mapper=default-permission-mapper, \
@@ -122,7 +122,7 @@ echo key-store conf
   :write-attribute(name=credential-reference, value=clear-text=changeit)
 ./subsystem=elytron/key-store=applicationKS \
   :write-attribute(name=path, value=$keystorePath)
-./subsystem=elytron/key-store=applicationKS:undefine-attribute(name=relative-to)
+./subsystem=elytron/key-store=applicationKS:write-attribute(name=relative-to, value=jboss.server.config.dir)
 
 ##----- alter elytron/tls/key-managers/key-manager settings -----
 ./subsystem=elytron/key-manager=applicationKM \

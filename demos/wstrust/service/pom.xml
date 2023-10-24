@@ -95,7 +95,10 @@
 
                         <!-- this is common config used by child modules -->
                         <configuration>
+                            <output-file-name>${project.build.finalName}.jar</output-file-name>
+                            <!-- rls
                             <output-file-name>${project.build.finalName}-bootable-openshift.jar</output-file-name>
+                            -->
                             <feature-packs>
                                 <feature-pack>
                                     <location>org.wildfly:wildfly-galleon-pack:${version.wildfly.feature-pack}</location>
@@ -107,12 +110,15 @@
                             </layers>
                             <cli-sessions>
                                 <cli-session>
-                                    <properties-file>${project.basedir}/target/jbws-testsuite-default-elytron-CLI.properties</properties-file>
+                                    <properties-file>${project.basedir}/../shared-cli-scripts/jbws-testsuite-default-elytron-CLI.properties</properties-file>
                                     <script-files>
-                                        <script>./scripts/jbws-testsuite-default-elytron.cli</script>
+                                        <script>${project.basedir}/../shared-cli-scripts/jbws-testsuite-default-elytron.cli</script>
                                     </script-files>
                                 </cli-session>
                             </cli-sessions>
+                            <extra-server-content-dirs>
+                                <extra-content>${project.basedir}/../shared-extra-content</extra-content>
+                            </extra-server-content-dirs>
                             <plugin-options>
                                 <!-- this flag is super necessary: otherwise wildfly-maven-plugin and
                                      wildfly-jar-maven-plugin would collide  -->
@@ -139,64 +145,11 @@
                             <artifactId>${project.artifactId}</artifactId>
                             <version>${project.version}</version>
                             <packaging>jar</packaging>
+                            <classifier>bootable-openshift</classifier>
+                            <file>${project.build.directory}/${project.build.finalName}.jar</file>
+                            <!--
                             <file>${project.build.directory}/${project.build.finalName}-bootable-openshift.jar</file>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-antrun-plugin</artifactId>
-                <version>3.1.0</version>
-                <executions>
-                    <execution>
-                        <id>create-server-config</id>
-                        <phase>generate-sources</phase>
-                        <goals><goal>run</goal></goals>
-                        <configuration>
-                            <target>
-                                <path id="path-testResourcesDir">
-                                    <pathelement location="${project.basedir}/src/test/resources" />
-                                </path>
-
-                                <path id="path-usersPropFile">
-                                    <pathelement location="${basedir}/src/test/resources/jaxws/samples/wsse/policy/jaas/digest/WEB-INF/jbossws-users.properties" />
-                                </path>
-
-                                <path id="path-rolesPropFile">
-                                    <pathelement location="${basedir}/src/test/resources/jaxws/samples/wsse/policy/jaas/digest/WEB-INF/jbossws-roles.properties" />
-                                </path>
-
-                                <path id="path-keystorePath">
-                                    <pathelement location="${basedir}/src/test/etc/test.keystore" />
-                                </path>
-
-                                <path id="path-project.build.directory">
-                                    <pathelement location="${project.basedir}/target" />
-                                </path>
-                                <!--Convert these path values to unix/platform-independent format and later output these value to property file -->
-                                <pathconvert targetos="unix" property="value-testResourcesDir" refid="path-testResourcesDir">
-                                </pathconvert>
-
-                                <pathconvert targetos="unix" property="value-usersPropFile" refid="path-usersPropFile">
-                                </pathconvert>
-
-                                <pathconvert targetos="unix" property="value-rolesPropFile" refid="path-rolesPropFile">
-                                </pathconvert>
-
-                                <pathconvert targetos="unix" property="value-keystorePath" refid="path-keystorePath">
-                                </pathconvert>
-
-                                <pathconvert targetos="unix" property="value-project.build.directory" refid="path-project.build.directory">
-                                </pathconvert>
-
-                                <propertyfile file="${value-project.build.directory}/jbws-testsuite-default-elytron-CLI.properties">
-                                    <entry key="testResourcesDir" value="${value-testResourcesDir}" />
-                                    <entry key="usersPropFile" value="${value-usersPropFile}" />
-                                    <entry key="rolesPropFile" value="${value-rolesPropFile}" />
-                                    <entry key="keystorePath" value="${value-keystorePath}" />
-                                </propertyfile>
-                            </target>
+                            -->
                         </configuration>
                     </execution>
                 </executions>
