@@ -119,16 +119,16 @@ echo JAASJBossWS domain config
 ##----- alter elytron/tls/key-stores/key-store settings -----
 echo key-store conf
 ./subsystem=elytron/key-store=applicationKS/ \
-  :write-attribute(name=credential-reference, value=clear-text=changeit)
+  :write-attribute(name=credential-reference, value=clear-text=password)
 ./subsystem=elytron/key-store=applicationKS \
   :write-attribute(name=path, value=$keystorePath)
 ./subsystem=elytron/key-store=applicationKS:write-attribute(name=relative-to, value=jboss.server.config.dir)
 
 ##----- alter elytron/tls/key-managers/key-manager settings -----
 ./subsystem=elytron/key-manager=applicationKM \
-  :write-attribute(name=credential-reference, value=clear-text=changeit)
+  :write-attribute(name=credential-reference, value=clear-text=password)
 ./subsystem=elytron/key-manager=applicationKM \
-  :write-attribute(name=alias-filter, value=tomcat)
+  :write-attribute(name=alias-filter, value=jboss)
 
 ## Add a system property for JBWS-3628 testcase
 echo system property for JBWS-3628
