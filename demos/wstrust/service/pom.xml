@@ -95,10 +95,9 @@
 
                         <!-- this is common config used by child modules -->
                         <configuration>
-                            <output-file-name>${project.build.finalName}.jar</output-file-name>
-                            <!-- rls
+
                             <output-file-name>${project.build.finalName}-bootable-openshift.jar</output-file-name>
-                            -->
+
                             <feature-packs>
                                 <feature-pack>
                                     <location>org.wildfly:wildfly-galleon-pack:${version.wildfly.feature-pack}</location>
@@ -124,6 +123,7 @@
                                      wildfly-jar-maven-plugin would collide  -->
                                 <jboss-fork-embedded>true</jboss-fork-embedded>
                             </plugin-options>
+                            <cloud></cloud>
                         </configuration>
                     </execution>
                 </executions>
@@ -146,10 +146,9 @@
                             <version>${project.version}</version>
                             <packaging>jar</packaging>
                             <classifier>bootable-openshift</classifier>
-                            <file>${project.build.directory}/${project.build.finalName}.jar</file>
-                            <!--
-                            <file>${project.build.directory}/${project.build.finalName}-bootable-openshift.jar</file>
-                            -->
+
+                             <file>${project.build.directory}/${project.build.finalName}-bootable-openshift.jar</file>
+
                         </configuration>
                     </execution>
                 </executions>
