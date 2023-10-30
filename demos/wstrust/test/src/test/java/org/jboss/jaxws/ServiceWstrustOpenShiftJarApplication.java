@@ -80,7 +80,7 @@ public class ServiceWstrustOpenShiftJarApplication implements BootableJarOpenShi
 	@Override
 	public List<Secret> getSecrets() {
 		List<Secret> secrets = new ArrayList<>();
-		secrets.add(TEST_SECRET);
+		// a secrete is not required for this app to run
 		return Collections.unmodifiableList(secrets);
 	}
 

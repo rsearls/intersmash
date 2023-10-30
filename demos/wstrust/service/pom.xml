@@ -123,6 +123,7 @@
                                      wildfly-jar-maven-plugin would collide  -->
                                 <jboss-fork-embedded>true</jboss-fork-embedded>
                             </plugin-options>
+                            <!-- REQUIRED in order to make the archive Bootable (Enable cloud support for OCP) -->
                             <cloud></cloud>
                         </configuration>
                     </execution>
@@ -146,9 +147,7 @@
                             <version>${project.version}</version>
                             <packaging>jar</packaging>
                             <classifier>bootable-openshift</classifier>
-
                              <file>${project.build.directory}/${project.build.finalName}-bootable-openshift.jar</file>
-
                         </configuration>
                     </execution>
                 </executions>
