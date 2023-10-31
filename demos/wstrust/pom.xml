@@ -133,6 +133,27 @@
                      </exclusion>
                  </exclusions>
              </dependency>
+             <dependency>
+                 <groupId>org.apache.cxf</groupId>
+                 <artifactId>cxf-rt-ws-security</artifactId>
+                 <version>${version.org.apache.cxf}</version>
+                 <exclusions>
+                     <exclusion>
+                         <groupId>org.ehcache</groupId>
+                         <artifactId>ehcache</artifactId>
+                     </exclusion>
+                 </exclusions>
+             </dependency>
+             <dependency>
+                 <groupId>org.apache.cxf</groupId>
+                 <artifactId>cxf-core</artifactId>
+                 <version>${version.org.apache.cxf}</version>
+             </dependency>
+             <dependency>
+                 <groupId>org.jboss.ws.cxf</groupId>
+                 <artifactId>jbossws-cxf-test-utils</artifactId>
+                 <version>${version.jbossws-cxf}</version>
+             </dependency>
         </dependencies>
     </dependencyManagement>
 

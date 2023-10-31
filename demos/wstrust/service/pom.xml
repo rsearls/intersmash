@@ -57,6 +57,10 @@
             <groupId>org.jboss.ws.cxf</groupId>
             <artifactId>jbossws-cxf-client</artifactId>
         </dependency>
+        <dependency>
+            <groupId>org.jboss.intersmash</groupId>
+            <artifactId>wstrust-shared</artifactId>
+        </dependency>
     </dependencies>
     <build>
         <plugins>
@@ -67,7 +71,7 @@
                 <configuration>
                     <!-- exclude all jars in WEB-INF/lib dir except for wstrust-shared-*.jar -->
                     <packagingExcludes>%regex[^WEB-INF\/lib\/(?!wstrust-shared-.*\.jar$).*$]</packagingExcludes>
-                    <warName>ROOT</warName>
+                    <warName>service-ROOT</warName>
                     <archive>
                         <manifestFile>${project.basedir}/src/main/webapp/META-INF/MANIFEST.MF</manifestFile>
                     </archive>
@@ -95,7 +99,7 @@
 
                         <!-- this is common config used by child modules -->
                         <configuration>
-
+<!-- rls test --><context-root>false</context-root>
                             <output-file-name>${project.build.finalName}-bootable-openshift.jar</output-file-name>
 
                             <feature-packs>
