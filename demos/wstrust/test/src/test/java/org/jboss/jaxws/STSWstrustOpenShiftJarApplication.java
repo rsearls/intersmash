@@ -89,6 +89,12 @@ public class STSWstrustOpenShiftJarApplication implements BootableJarOpenShiftAp
 		List<EnvVar> list = new ArrayList<>();
 		list.add(new EnvVarBuilder().withName(TEST_ENV_VAR.getName())
 				.withValue(TEST_ENV_VAR.getValue()).build());
+		list.add(new EnvVarBuilder().withName("SERVICE_ENDPOINT_URL")
+				.withValue(
+						String.format("http://%s/service-ROOT/SecurityService",
+								cz.xtf.core.openshift.OpenShifts.master()
+										.generateHostname(ServiceWstrustOpenShiftJarApplication.ARTIFACTID)))
+				.build());
 		return Collections.unmodifiableList(list);
 	}
 

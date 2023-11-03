@@ -57,8 +57,7 @@ public class SampleSTS extends SecurityTokenServiceProvider {
 		StaticService service = new StaticService();
 		String serverHostRegexp = WSTrustAppUtils.getServerHost().replace("[", "\\[").replace("]", "\\]").replace("127.0.0.1",
 				"localhost");
-		service.setEndpoints(Arrays.asList(
-				"http://wstrust-service-rsearls-wstrust1.apps.eapqe-031-giiq.eapqe.psi.redhat.com/service-ROOT/SecurityService"));
+		service.setEndpoints(Arrays.asList(System.getenv("SERVICE_ENDPOINT_URL")));
 		services.add(service);
 
 		TokenIssueOperation issueOperation = new TokenIssueOperation();
