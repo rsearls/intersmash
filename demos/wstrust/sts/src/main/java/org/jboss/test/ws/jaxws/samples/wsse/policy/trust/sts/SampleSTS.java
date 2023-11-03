@@ -58,7 +58,7 @@ public class SampleSTS extends SecurityTokenServiceProvider {
 		String serverHostRegexp = WSTrustAppUtils.getServerHost().replace("[", "\\[").replace("]", "\\]").replace("127.0.0.1",
 				"localhost");
 		service.setEndpoints(Arrays.asList(
-				"http://localhost:(\\d)*/jbossws-cxf-k8s-wstrust-service/SecurityService"));
+				"http://wstrust-service-rsearls-wstrust1.apps.eapqe-031-giiq.eapqe.psi.redhat.com/service-ROOT/SecurityService"));
 		services.add(service);
 
 		TokenIssueOperation issueOperation = new TokenIssueOperation();
